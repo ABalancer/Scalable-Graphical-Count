@@ -9,21 +9,20 @@ def find_next_square(number):  # returns the square root of the next biggest squ
 
 
 class ShapeCanvas(tk.Canvas):
-    def __init__(self, master, shape, gap_width=5, canvas_size=500, num_shapes=5):
+    def __init__(self, master, shape, gap_width=5, canvas_size=500, num_shapes=11):
         super().__init__(master, width=canvas_size, height=canvas_size, borderwidth=0, highlightthickness=0)
         self.shape = shape
         self.next_square = find_next_square(num_shapes)
         self.canvas_size = canvas_size
         self.shape_size = (canvas_size / self.next_square) - gap_width - (gap_width / self.next_square)
-        self.num_shapes = num_shapes
+        self.number_of_shapes = num_shapes
         self.gap_width = gap_width
         self.shapes = [False] * num_shapes
 
         self.draw_shapes()
 
-        self.bind("<Button-1>", self.toggle_shape)
-
     def draw_shapes(self):
+        shape_count = 0
         for j in range(self.next_square):
             y0 = self.canvas_size - self.gap_width - j * (self.shape_size + self.gap_width)
             y1 = y0 - self.shape_size
@@ -34,25 +33,11 @@ class ShapeCanvas(tk.Canvas):
                     self.create_rectangle(x0, y0, x1, y1, outline="black", width=3, fill="")
                 elif self.shape == "circle":
                     self.create_oval(x0, y0, x1, y1, outline="black", width=3, fill="")
-
-    def toggle_shape(self, event):
-        index = event.x // self.shape_size
-        if index < self.num_shapes:
-            self.shapes[index] = not self.shapes[index]
-            self.redraw_shapes()
-
-    def redraw_shapes(self):
-        self.delete("shape")
-        for i, filled in enumerate(self.shapes):
-            if filled:
-                x0 = self.gap_width + i * (self.shape_size + self.gap_width)
-                y0 = self.gap_width
-                x1 = x0 + self.shape_size
-                y1 = y0 + self.shape_size
-                if self.shape == "square":
-                    self.create_rectangle(x0, y0, x1, y1, outline="black", width=3, fill="blue", tags="shape")
-                elif self.shape == "circle":
-                    self.create_oval(x0, y0, x1, y1, outline="black", width=3, fill="blue", tags="shape")
+                shape_count += 1
+                if shape_count >= self.number_of_shapes:
+                    break
+            if shape_count >= self.number_of_shapes:
+                break
 
 
 class ShapeApp(tk.Tk):

@@ -1,12 +1,6 @@
 import tkinter as tk
 import numpy as np
 
-'''
-TODO: 
-Colour
- 
-'''
-
 
 def find_next_square(number):  # returns the square root of the next biggest square number
     sqrt = np.sqrt(number)

@@ -31,7 +31,8 @@ class ShapeCanvas(tk.Canvas):
         self._unfilled_shapes = unfilled
         self._filled_shapes = filled
         next_square = find_next_square(total)
-        self._total_shapes = next_square
+        self._total_shapes = next_square * next_square
+        self._shapes = [0] * self._total_shapes
         shape_size = (self._canvas_size / next_square) - self._gap_width - self._shape_border_width - \
                      (self._gap_width / next_square)
         shape_count = 0
@@ -47,7 +48,7 @@ class ShapeCanvas(tk.Canvas):
                 if shape_count >= unfilled:
                     outline = ""
                 x0 = self._gap_width + self._shape_border_width / 2 + \
-                     i * (shape_size + self._gap_width + self._shape_border_width)
+                    i * (shape_size + self._gap_width + self._shape_border_width)
                 x1 = x0 + shape_size
                 if self._shape == "square":
                     shape = self.create_rectangle(x0, y0, x1, y1, outline=outline, width=self._shape_border_width,
@@ -55,14 +56,11 @@ class ShapeCanvas(tk.Canvas):
                 else:
                     shape = self.create_oval(x0, y0, x1, y1, outline=outline, width=self._shape_border_width,
                                              fill=fill)
-                self._shapes.append(shape)
+                self._shapes[shape_count] = shape
                 shape_count += 1
 
     def _destroy_shapes(self):
-        if self._shapes:
-            for shape in self._shapes:
-                self.delete(shape)
-            self._shapes = []
+        self.delete("all")
 
     def get_filled_shape_count(self):
         return self._filled_shapes
@@ -70,15 +68,21 @@ class ShapeCanvas(tk.Canvas):
     def get_unfilled_shape_count(self):
         return self._unfilled_shapes
 
-    def empty_shape(self, shape_number):
-        self.itemconfig(shape_number, fill="")
+    def _empty_shape(self, shape_number):
+        self.itemconfig(self._shapes[shape_number - 1], fill="")
+        self._filled_shapes -= 1
 
     def empty_shapes_up_to(self, shape_number):
         for i in range(1, shape_number + 1):
-            self.empty_shape(i)
+            self._empty_shape(i)
 
-    def fill_shape(self, shape_number, colour="black"):
-        self.itemconfig(shape_number, fill=colour)
+    def _fill_shape(self, shape_number, colour="black"):
+        self.itemconfig(self._shapes[shape_number - 1], fill=colour)
+        self._filled_shapes += 1
+
+    def colour_latest_filled_shape(self, colour):
+        if self._filled_shapes > 0:
+            self.itemconfig(self._shapes[self._filled_shapes - 1], fill=colour)
 
     def fill_shapes_up_to(self, shape_number, colour="black"):
         current_total = self._shapes[-1]
@@ -86,7 +90,12 @@ class ShapeCanvas(tk.Canvas):
             self.draw_shapes(total=current_total + 1, filled=shape_number, unfilled=self._unfilled_shapes)
         else:
             for i in range(1, shape_number + 1):
-                self.fill_shape(i, colour)
+                self._fill_shape(i, colour)
+
+    def fill_shapes_and_colour_final_shape(self, shape_number, colour):
+        self.colour_latest_filled_shape("black")
+        self.fill_shapes_up_to(shape_number)
+        self.colour_latest_filled_shape(colour)
 
 
 class ShapeApp(tk.Tk):
@@ -97,17 +106,17 @@ class ShapeApp(tk.Tk):
         self.square_canvas = ShapeCanvas(self, "square")
         self.circle_canvas = ShapeCanvas(self, "circle")
 
-        self.square_canvas.draw_shapes(25, 14, 3)
-        self.circle_canvas.draw_shapes(9, 7, 3)
+        self.square_canvas.draw_shapes(25, 14, 0)
+        self.circle_canvas.draw_shapes(9, 5, 0)
 
         self.square_canvas.grid(row=0, column=0)
         self.circle_canvas.grid(row=0, column=1)
 
-        self.after(2000, self.square_canvas.fill_shapes_up_to, 14)
-        self.after(4000, self.square_canvas.fill_shapes_up_to, 29)
+        self.after(2000, self.square_canvas.fill_shapes_and_colour_final_shape, 14, "#00008B")
+        self.after(4000, self.square_canvas.fill_shapes_and_colour_final_shape, 29, "#00008B")
 
-        self.after(2000, self.circle_canvas.fill_shapes_up_to, 9)
-        self.after(4000, self.circle_canvas.fill_shapes_up_to, 15)
+        self.after(2000, self.circle_canvas.fill_shapes_and_colour_final_shape, 5, "#8B0000")
+        self.after(4000, self.circle_canvas.fill_shapes_and_colour_final_shape, 15, "#8B0000")
 
 
 if __name__ == "__main__":

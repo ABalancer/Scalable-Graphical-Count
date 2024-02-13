@@ -85,11 +85,10 @@ class ShapeCanvas(tk.Canvas):
             self.itemconfig(self._shapes[self._filled_shapes - 1], fill=colour)
 
     def fill_shapes_up_to(self, shape_number, colour="black"):
-        current_total = self._shapes[-1]
-        if shape_number > current_total:
-            self.draw_shapes(total=current_total + 1, filled=shape_number, unfilled=self._unfilled_shapes)
+        if shape_number > self._total_shapes:
+            self.draw_shapes(total=self._total_shapes + 1, filled=shape_number, unfilled=self._unfilled_shapes)
         else:
-            for i in range(1, shape_number + 1):
+            for i in range(1 + self._filled_shapes, shape_number + 1):
                 self._fill_shape(i, colour)
 
     def fill_shapes_and_colour_final_shape(self, shape_number, colour):
@@ -113,10 +112,14 @@ class ShapeApp(tk.Tk):
         self.circle_canvas.grid(row=0, column=1)
 
         self.after(2000, self.square_canvas.fill_shapes_and_colour_final_shape, 14, "#00008B")
-        self.after(4000, self.square_canvas.fill_shapes_and_colour_final_shape, 29, "#00008B")
+        self.after(4000, self.square_canvas.fill_shapes_and_colour_final_shape, 15, "#00008B")
+        self.after(6000, self.square_canvas.fill_shapes_and_colour_final_shape, 29, "#00008B")
+        self.after(8000, self.square_canvas.fill_shapes_and_colour_final_shape, 30, "#00008B")
 
         self.after(2000, self.circle_canvas.fill_shapes_and_colour_final_shape, 5, "#8B0000")
-        self.after(4000, self.circle_canvas.fill_shapes_and_colour_final_shape, 15, "#8B0000")
+        self.after(4000, self.circle_canvas.fill_shapes_and_colour_final_shape, 6, "#8B0000")
+        self.after(6000, self.circle_canvas.fill_shapes_and_colour_final_shape, 16, "#8B0000")
+        self.after(8000, self.circle_canvas.fill_shapes_and_colour_final_shape, 17, "#8B0000")
 
 
 if __name__ == "__main__":

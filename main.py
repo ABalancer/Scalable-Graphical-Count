@@ -102,18 +102,22 @@ class ShapeApp(tk.Tk):
         self.square_canvas = ShapeCanvas(self, "square")
         self.circle_canvas = ShapeCanvas(self, "circle")
 
-        self.square_canvas.draw_shapes(16, 14, 0)
+        self.square_canvas.draw_shapes(1, 0, 0)
         self.circle_canvas.draw_shapes(4, 5, 0)
 
         self.square_canvas.grid(row=0, column=0)
         self.circle_canvas.grid(row=0, column=1)
 
+        for i in range(1, 101):
+            self.after(50 * i, self.square_canvas.fill_shapes_and_colour_final_shape, i, "#00008B")
+
+        '''
         self.after(2000, self.square_canvas.fill_shapes_and_colour_final_shape, 6, "#00008B")
         self.after(4000, self.square_canvas.fill_shapes_and_colour_final_shape, 14, "#00008B")
         self.after(6000, self.square_canvas.fill_shapes_and_colour_final_shape, 15, "#00008B")
         self.after(8000, self.square_canvas.fill_shapes_and_colour_final_shape, 29, "#00008B")
         self.after(10000, self.square_canvas.fill_shapes_and_colour_final_shape, 30, "#00008B")
-
+        '''
         self.after(2000, self.circle_canvas.fill_shapes_and_colour_final_shape, 2, "#8B0000")
         self.after(4000, self.circle_canvas.fill_shapes_and_colour_final_shape, 5, "#8B0000")
         self.after(6000, self.circle_canvas.fill_shapes_and_colour_final_shape, 6, "#8B0000")

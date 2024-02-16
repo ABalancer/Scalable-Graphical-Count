@@ -79,7 +79,6 @@ class ShapeCanvas(tk.Canvas):
             self.itemconfig(self._shapes[self._filled_shapes - 1], fill=colour)
 
     def fill_shapes_up_to(self, shape_number, colour="black"):
-        print(shape_number, self._total_shapes)
         if shape_number > self._total_shapes:
             if find_next_square(shape_number)**2 > self._total_shapes + 1:
                 self.draw_shapes(total=shape_number, filled=shape_number, unfilled=self._unfilled_shapes)

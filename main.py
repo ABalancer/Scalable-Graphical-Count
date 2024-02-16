@@ -8,6 +8,12 @@ def find_next_square(number):  # returns the square root of the next biggest squ
     return next_square
 
 
+def find_previous_square(number):  # returns the square root of the next biggest square number
+    sqrt = np.sqrt(number)
+    previous_square = int(np.floor(sqrt))
+    return previous_square
+
+
 class ShapeCanvas(tk.Canvas):
     def __init__(self, master, shape, canvas_size=500, gap_width=15, border_width=15):
         super().__init__(master, width=canvas_size, height=canvas_size, borderwidth=0, highlightthickness=0)
@@ -67,8 +73,18 @@ class ShapeCanvas(tk.Canvas):
         self._filled_shapes -= 1
 
     def empty_shapes_up_to(self, shape_number):
-        for i in range(1, shape_number + 1):
-            self._empty_shape(i)
+        if shape_number < self._filled_shapes:
+            for i in range(self._filled_shapes, shape_number, -1):
+                square_of_next_square = find_next_square(i - 1)**2
+                if (self._unfilled_shapes <= square_of_next_square == shape_number > 0) or \
+                   (self._total_shapes > square_of_next_square and shape_number > 0):
+                    self.draw_shapes(square_of_next_square, self._unfilled_shapes, i - 1)
+                else:
+                    self._empty_shape(i)
+
+    def empty_shapes_and_colour_final_shape(self, shape_number, colour):
+        self.empty_shapes_up_to(shape_number)
+        self.colour_latest_filled_shape(colour)
 
     def _fill_shape(self, shape_number, colour="black"):
         self.itemconfig(self._shapes[shape_number - 1], fill=colour)
@@ -111,18 +127,15 @@ class ShapeApp(tk.Tk):
         for i in range(1, 101):
             self.after(50 * i, self.square_canvas.fill_shapes_and_colour_final_shape, i, "#00008B")
 
-        '''
-        self.after(2000, self.square_canvas.fill_shapes_and_colour_final_shape, 6, "#00008B")
-        self.after(4000, self.square_canvas.fill_shapes_and_colour_final_shape, 14, "#00008B")
-        self.after(6000, self.square_canvas.fill_shapes_and_colour_final_shape, 15, "#00008B")
-        self.after(8000, self.square_canvas.fill_shapes_and_colour_final_shape, 29, "#00008B")
-        self.after(10000, self.square_canvas.fill_shapes_and_colour_final_shape, 30, "#00008B")
-        '''
+        for i in range(99, -1, -1):
+            self.after(5000 + (50 * (100 - i)), self.square_canvas.empty_shapes_and_colour_final_shape, i, "#00008B")
+
         self.after(2000, self.circle_canvas.fill_shapes_and_colour_final_shape, 2, "#8B0000")
         self.after(4000, self.circle_canvas.fill_shapes_and_colour_final_shape, 5, "#8B0000")
         self.after(6000, self.circle_canvas.fill_shapes_and_colour_final_shape, 6, "#8B0000")
         self.after(8000, self.circle_canvas.fill_shapes_and_colour_final_shape, 16, "#8B0000")
         self.after(10000, self.circle_canvas.fill_shapes_and_colour_final_shape, 17, "#8B0000")
+        self.after(12000, self.circle_canvas.empty_shapes_and_colour_final_shape, 7, "#8B0000")
 
 
 if __name__ == "__main__":

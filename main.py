@@ -29,7 +29,7 @@ class ShapeCanvas(tk.Canvas):
     def draw_shapes(self, total, unfilled=0, filled=0):
         self._destroy_shapes()
         self._unfilled_shapes = unfilled
-        self._filled_shapes = filled
+        self._filled_shapes = filled if filled >= 0 else 0
         next_square = find_next_square(total)
         self._total_shapes = next_square * next_square
         self._shapes = [0] * self._total_shapes
